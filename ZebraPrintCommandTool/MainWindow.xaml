@@ -1,0 +1,53 @@
+﻿<Window x:Class="ZebraPrintCommandTool.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ZebraPrintCommandTool"
+        mc:Ignorable="d"
+        DataContext="{Binding Main, Source={StaticResource Locator}}"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+        
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="9*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <TextBox Grid.Row="0" Text="{Binding InputText}" Margin="20"
+                     AcceptsReturn="True"/>
+            <Button Grid.Row="1" Content="TEST SEND" Command="{Binding Test}"/>
+        </Grid>
+
+        <Grid Grid.Column="1" Margin="10 0 0 0">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="바코드정보" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="1" Text="P/N" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="2" Text="S/N" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="3" Text="Pos-X" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="4" Text="Pos-Y" VerticalAlignment="Center"/>
+
+            <TextBlock Grid.Row="0" Text="{Binding Barcode}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="1" Text="{Binding PN}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="2" Text="{Binding SN}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="3" Text="{Binding PositionX}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="4" Text="{Binding PositionY}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            
+        </Grid>
+        
+    </Grid>
+</Window>
