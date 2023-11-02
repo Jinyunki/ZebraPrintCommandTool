@@ -6,26 +6,61 @@
         xmlns:local="clr-namespace:ZebraPrintCommandTool"
         mc:Ignorable="d"
         DataContext="{Binding Main, Source={StaticResource Locator}}"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="480" Width="1000">
     <Grid>
-        
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="300"/>
         </Grid.ColumnDefinitions>
-        
-        <Grid Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="9*"/>
-                <RowDefinition Height="1*"/>
-            </Grid.RowDefinitions>
-            <TextBox Grid.Row="0" Text="{Binding InputText}" Margin="20"
+
+        <Grid Grid.Column="0" >
+            <TextBox Grid.Row="0" Text="{Binding InputText}" Margin="20" Visibility="Hidden"
                      AcceptsReturn="True"/>
-            <Button Grid.Row="1" Content="TEST SEND" Command="{Binding Test}"/>
+
+            <Grid>
+                <Grid Grid.Column="0" Background="Black" Opacity="0.7"
+                      Width="{Binding BarcodeSizeView}" Height="{Binding BarcodeSizeView}"
+                      Margin="{Binding BarcodeViewPosition}"
+                      VerticalAlignment="Top" HorizontalAlignment="Left">
+
+                    <Button Background="Transparent" Command="{Binding ClickBarcode}"/>
+                    
+                    <TextBlock  Foreground="White" FontSize="{Binding FontSize}" VerticalAlignment="Center" HorizontalAlignment="Center"
+                                Text="바코드 영역" Background="Transparent"/>
+                </Grid>
+                
+
+                <Button Grid.Column="0" Foreground="Black"  Background="Transparent"
+                           VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="40"
+                           Content="{Binding PN}" Height="50" Command="{Binding ClickPN}"
+                           Margin="{Binding PNViewPosition}"/>
+
+                <Button Grid.Column="0" Foreground="Black" Background="Transparent"
+                        VerticalAlignment="Top" HorizontalAlignment="Left"
+                        FontSize="40" Command="{Binding ClickSN}"
+                        Content="{Binding SN}"  Height="50"
+                        Margin="{Binding SNViewPosition}"/>
+
+
+                <Button Grid.Column="0" Foreground="Black"
+                           VerticalAlignment="Top" HorizontalAlignment="Left" FontSize="60"
+                           Height="80" Width="300" Command="{Binding ClickLogo}"
+                           Margin="{Binding LogoViewPosition}">
+                    <Button.Background>
+                        <ImageBrush ImageSource="/Image/LucidS.png"/>
+                    </Button.Background>
+                </Button>
+            </Grid>
         </Grid>
 
-        <Grid Grid.Column="1" Margin="10 0 0 0">
+        <Grid Grid.Column="1" Margin="10 0 10 0" Background="LightGray">
             <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
                 <RowDefinition/>
                 <RowDefinition/>
                 <RowDefinition/>
@@ -35,18 +70,85 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" Text="바코드정보" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="0" Text="바코드" VerticalAlignment="Center"/>
             <TextBlock Grid.Row="1" Text="P/N" VerticalAlignment="Center"/>
             <TextBlock Grid.Row="2" Text="S/N" VerticalAlignment="Center"/>
+            
             <TextBlock Grid.Row="3" Text="Pos-X" VerticalAlignment="Center"/>
             <TextBlock Grid.Row="4" Text="Pos-Y" VerticalAlignment="Center"/>
 
             <TextBlock Grid.Row="0" Text="{Binding Barcode}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            <TextBox Grid.Row="1" Text="{Binding PN}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            <TextBox Grid.Row="2" Text="{Binding SN}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="1" Text="{Binding PN}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="2" Text="{Binding SN}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            
+            
             <TextBox Grid.Row="3" Text="{Binding PositionX}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             <TextBox Grid.Row="4" Text="{Binding PositionY}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+
+            <Button Grid.Row="12" Content="TEST SEND" Command="{Binding Test}"/>
+
+
             
+            <Grid Grid.Row="6">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+
+                <Button Grid.Column="2" Content="↑" Width="40" Command="{Binding PositionUp}"
+                    Background="DarkGreen" Foreground="White"/>
+            </Grid>
+
+
+            <Grid Grid.Row="7">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+
+                <TextBlock Grid.Column="0" Text="Position" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15"/>
+                <Button Grid.Column="3" Content="→" Width="40" Command="{Binding PositionRight}"
+                    Background="DarkGreen" Foreground="White"/>
+                <Button Grid.Column="1" Content="←" Width="40" Command="{Binding PositionLeft}"
+                    Background="DarkGreen" Foreground="White"/>
+            </Grid>
+
+            <Grid Grid.Row="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+
+                <Button Grid.Column="2" Content="↓" Width="40" Command="{Binding PositionDown}"
+                    Background="DarkGreen" Foreground="White"/>
+            </Grid>
+
+
+            <Grid Grid.Row="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+
+                <TextBlock Grid.Column="0" Text="Size" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15"/>
+                <Button Grid.Column="3" Content="+" Width="40" Command="{Binding BarcodeSizeUp}"
+                    Background="Blue" Foreground="White"/>
+                <TextBlock Grid.Column="2" Text="{Binding BarcodeSize}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"/>
+                <Button Grid.Column="1" Content="-" Width="40" Command="{Binding BarcodeSizeDown}"
+                    Background="Red" Foreground="White"/>
+            </Grid>
         </Grid>
         
     </Grid>
