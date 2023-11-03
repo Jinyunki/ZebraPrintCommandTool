@@ -65,6 +65,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\List_BarcodeData.cs" />
     <Compile Include="Utiles\Command.cs" />
     <Compile Include="Utiles\RawPrinterHelper.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
@@ -106,9 +107,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Model\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Resource Include="Image\LucidS.png" />
   </ItemGroup>

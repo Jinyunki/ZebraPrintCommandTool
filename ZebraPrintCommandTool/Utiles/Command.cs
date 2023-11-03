@@ -12,7 +12,6 @@ namespace ZebraPrintCommandTool.Utiles
         {
             this.ExecuteMethod = execute_Method;
         }
-
         private Command(Action<object> execute_Method, Func<object, bool> canexecute_Method)
         {
             this.ExecuteMethod = execute_Method;

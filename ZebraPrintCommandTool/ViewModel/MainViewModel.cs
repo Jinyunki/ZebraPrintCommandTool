@@ -3,450 +3,585 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using System.Windows;
-using System.Windows.Input;
-using GalaSoft.MvvmLight;
+using ZebraPrintCommandTool.Model;
 using ZebraPrintCommandTool.Utiles;
 
 namespace ZebraPrintCommandTool.ViewModel
 {
-    public class MainViewModel : ViewModelBase
+    public class MainViewModel : List_BarcodeData
     {
-        private string _inputText = "";
-        public string InputText
-        {
-            get { return _inputText; }
-            set {
-                _inputText = "^XA\n" + value + "^\nXZ";
-                RaisePropertyChanged("InputText");
-            }
-        }
-        private string _pn = "";
-        public string PN
-        {
-            get { return _pn; }
-            set {
-                _pn = value;
-                RaisePropertyChanged("PN");
-            }
-        }
-        private string _sn = "";
-        public string SN
-        {
-            get { return _sn; }
-            set {
-                _sn = value;
-                RaisePropertyChanged("SN");
-            }
-        }
-        private string _barcode = "";
-        public string Barcode
-        {
-            get { return _barcode; }
-            set {
-                _barcode = value;
-                RaisePropertyChanged("Barcode");
-            }
-        }
-        private string _positionX = "70";
-        public string PositionX
-        {
-            get { return _positionX; }
-            set {
-                _positionX = value;
-                RaisePropertyChanged("PositionX");
-            }
-        }
-        
-        private string _positionY = "90";
-        public string PositionY
-        {
-            get { return _positionY; }
-            set {
-                _positionY = value;
-                RaisePropertyChanged("PositionY");
-            }
-        }
-
-        private string _setDataPosition = "";
-        public string SetDataPosition
-        {
-            get { return _setDataPosition; }
-            set {
-                _setDataPosition = "\n\n^FO" + value;
-                RaisePropertyChanged("SetDataPosition");
-            }
-        }
-
-        private string _commandData = "";
-        public string CommandData
-        {
-            get { return _commandData; }
-            set {
-                _commandData = "\n^FD" + value + "^FS";
-                RaisePropertyChanged("CommandData");
-            }
-        }
-
-        private string _image = "";
-        public string Image
-        {
-            get { return _image; }
-            set {
-                _image = "\n^FR" + "\n^XGE:" + value + ",1,2^FS";
-                RaisePropertyChanged("Image");
-            }
-        }
-
-        private string _barcodeStyle = "";
-        public string BarcodeStyle
-        {
-            get { return _barcodeStyle; }
-            set {
-                _barcodeStyle = value + "N," + BarcodeSize.ToString() + ",200;"; 
-                RaisePropertyChanged("BarcodeStyle");
-            }
-        }
-
-        private int _barcodeSize = 7;
-        public int BarcodeSize
-        {
-            get { return _barcodeSize; }
-            set {
-                _barcodeSize = value;
-                RaisePropertyChanged("BarcodeSize");
-            }
-        }
-        
-        private double _barcodeSizeView ;
-        public double BarcodeSizeView
-        {
-            get { return _barcodeSizeView; }
-            set {
-                _barcodeSizeView = value * 45;
-                RaisePropertyChanged("BarcodeSizeView");
-            }
-        }
-        private double _fontsize;
-        public double FontSize
-        {
-            get { return _fontsize; }
-            set {
-                _fontsize = value * 5;
-                RaisePropertyChanged("FontSize");
-            }
-        }
-        private Thickness _barcodeViewPosition ;
-        public Thickness BarcodeViewPosition
-        {
-            get { return _barcodeViewPosition; }
-            set {
-                _barcodeViewPosition = value;
-                RaisePropertyChanged("BarcodeViewPosition");
-            }
-        }
-        private Thickness _PNViewPosition ;
-        public Thickness PNViewPosition
-        {
-            get { return _PNViewPosition; }
-            set {
-                _PNViewPosition = value;
-                RaisePropertyChanged("PNViewPosition");
-            }
-        }
-        private Thickness _SNViewPosition;
-        public Thickness SNViewPosition
-        {
-            get { return _SNViewPosition; }
-            set {
-                _SNViewPosition = value;
-                RaisePropertyChanged("SNViewPosition");
-            }
-        }
-        private Thickness _LogoViewPosition;
-        public Thickness LogoViewPosition
-        {
-            get { return _LogoViewPosition; }
-            set {
-                _LogoViewPosition = value;
-                RaisePropertyChanged("LogoViewPosition");
-            }
-        }
-
-        public string PrinterName = "ZDesigner ZT411-600dpi ZPL";
-        public ICommand Test { get; set; }
-        public ICommand BarcodeSizeUp { get; set; }
-        public ICommand BarcodeSizeDown { get; set; }
-        public ICommand ClickBarcode { get; set; }
-        public ICommand ClickPN { get; set; }
-        public ICommand ClickSN { get; set; }
-        public ICommand ClickLogo { get; set; }
-        public ICommand PositionUp { get; set; }
-        public ICommand PositionDown { get; set; }
-        public ICommand PositionLeft { get; set; }
-        public ICommand PositionRight { get; set; }
-
-
+        private List_BarcodeData BarcodeData = new List_BarcodeData();
+        private List_BarcodeData SerialNumberData = new List_BarcodeData();
+        private List_BarcodeData PartNumberData = new List_BarcodeData();
+        private List_BarcodeData ImageLogoData = new List_BarcodeData();
         public MainViewModel()
         {
             PN = "P11-G12100-03";
             SN = "2305900001";
-            Barcode = PN + ":" + "S" +SN;
+            Barcode = PN + ":" + "S" + SN;
             FontSize = BarcodeSize;
             BarcodeSizeView = BarcodeSize;
+
             SetBarcodePosition();
             SetLogoPosition();
             SetPNPosition();
             SetSNPosition();
 
-            Test = new Command(PrintTestSystem);
+            CommandPrintSend = new Command(PrintTestSystem);
+
             BarcodeSizeUp = new Command(BarcodeSizeUpCommand);
             BarcodeSizeDown = new Command(BarcodeSizeDownCommand);
 
-            ClickBarcode = new Command(ClickBarcodeCommand);
-            ClickPN = new Command(ClickPNCommand);
-            ClickSN = new Command(ClickSNCommand);
-            ClickLogo = new Command(ClickLogoCommand);
+            ClickViewCatchButtonList();
 
-            
             PositionUp = new Command(PositionUpCommand);
             PositionDown = new Command(PositionDownCommand);
             PositionLeft = new Command(PositionLeftCommand);
             PositionRight = new Command(PositionRightCommand);
-            
+
         }
+        #region Click View Catch
+
+        private void ClickViewCatchButtonList()
+        {
+            ClickBarcode = new Command(ClickBarcodeCommand);
+            ClickPN = new Command(ClickPNCommand);
+            ClickSN = new Command(ClickSNCommand);
+            ClickLogo = new Command(ClickLogoCommand);
+        }
+        
+        private void ClickLogoCommand(object obj)
+        {
+            Trace.WriteLine("==========   Start   ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\n");
+            try
+            {
+                ClickView = "Logo";
+                BarcodePositionX = ImageLogoData.BarcodePositionX;
+                BarcodePositionY = ImageLogoData.BarcodePositionY;
+
+
+            } catch (Exception ex)
+            {
+                Trace.WriteLine("========== Exception ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\nException : " + ex);
+                throw;
+            }
+
+        }
+
+        private void ClickSNCommand(object obj)
+        {
+            Trace.WriteLine("==========   Start   ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\n");
+            try
+            {
+                ClickView = "SN";
+                BarcodePositionX = SerialNumberData.BarcodePositionX;
+                BarcodePositionY = SerialNumberData.BarcodePositionY;
+
+            } catch (Exception ex)
+            {
+                Trace.WriteLine("========== Exception ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\nException : " + ex);
+                throw;
+            }
+
+        }
+
+        private void ClickPNCommand(object obj)
+        {
+            Trace.WriteLine("==========   Start   ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\n");
+            try
+            {
+                ClickView = "PN";
+                BarcodePositionX = PartNumberData.BarcodePositionX;
+                BarcodePositionY = PartNumberData.BarcodePositionY;
+
+            } catch (Exception ex)
+            {
+                Trace.WriteLine("========== Exception ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\nException : " + ex);
+                throw;
+            }
+
+        }
+
+        private void ClickBarcodeCommand(object obj)
+        {
+            Trace.WriteLine("==========   Start   ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\n");
+            try
+            {
+                ClickView = "Barcode";
+                BarcodePositionX = BarcodeData.BarcodePositionX;
+                BarcodePositionY = BarcodeData.BarcodePositionY;
+
+            } catch (Exception ex)
+            {
+                Trace.WriteLine("========== Exception ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\nException : " + ex);
+                throw;
+            }
+
+        }
+        #endregion
+
         private void SelectedViewControll()
         {
-            switch (ClickView)
+
+            Trace.WriteLine("==========   Start   ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\n");
+            try
             {
-                case "Barcode":
-                    SetBarcodePosition();
-                    break;
-                case "PN":
-                    SetPNPosition();
-                    break;
-                case "SN":
-                    SetSNPosition();
-                    break;
-                case "Logo":
-                    SetLogoPosition();
-                    break;
-                default:
-                    Console.WriteLine("No Click");
-                    break;
+
+                switch (ClickView)
+                {
+                    case "Barcode":
+                        SetBarcodePosition();
+                        break;
+                    case "PN":
+                        SetPNPosition();
+                        break;
+                    case "SN":
+                        SetSNPosition();
+                        break;
+                    case "Logo":
+                        SetLogoPosition();
+                        break;
+                    default:
+                        Console.WriteLine("No Click");
+                        break;
+                }
+            } catch (Exception ex)
+            {
+                Trace.WriteLine("========== Exception ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\nException : " + ex);
+                throw;
             }
+
         }
 
 
         private void PositionRightCommand(object obj)
         {
-            PositionX = (int.Parse(PositionX) + 10).ToString();
-            SelectedViewControll();
+            Trace.WriteLine("==========   Start   ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\n");
+            try
+            {
+                switch (ClickView)
+                {
+                    case "Barcode":
+                        BarcodeData.BarcodePositionX = (int.Parse(BarcodeData.BarcodePositionX) + 10).ToString();
+                        SelectedViewControll();
+                        BarcodePositionX = BarcodeData.BarcodePositionX;
+                        break;
+                    case "PN":
+                        PartNumberData.BarcodePositionX = (int.Parse(PartNumberData.BarcodePositionX) + 10).ToString();
+                        SelectedViewControll();
+                        BarcodePositionX = PartNumberData.BarcodePositionX;
+                        break;
+                    case "SN":
+                        SerialNumberData.BarcodePositionX = (int.Parse(SerialNumberData.BarcodePositionX) + 10).ToString();
+                        SelectedViewControll();
+                        BarcodePositionX = SerialNumberData.BarcodePositionX;
+                        break;
+                    case "Logo":
+                        ImageLogoData.BarcodePositionX = (int.Parse(ImageLogoData.BarcodePositionX) + 10).ToString();
+                        SelectedViewControll();
+                        BarcodePositionX = ImageLogoData.BarcodePositionX;
+                        break;
+                    default:
+                        Console.WriteLine("No Click");
+                        break;
+                }
+                
+
+            } catch (Exception ex)
+            {
+                Trace.WriteLine("========== Exception ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\nException : " + ex);
+                throw;
+            }
+
         }
-        
+
 
         private void PositionLeftCommand(object obj)
         {
-            PositionX = (int.Parse(PositionX) - 10).ToString();
-            SelectedViewControll();
+            Trace.WriteLine("==========   Start   ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\n");
+            try
+            {
+                switch (ClickView)
+                {
+                    case "Barcode":
+                        BarcodeData.BarcodePositionX = (int.Parse(BarcodeData.BarcodePositionX) - 10).ToString();
+                        SelectedViewControll();
+                        BarcodePositionX = BarcodeData.BarcodePositionX;
+                        break;
+                    case "PN":
+                        PartNumberData.BarcodePositionX = (int.Parse(PartNumberData.BarcodePositionX) - 10).ToString();
+                        SelectedViewControll();
+                        BarcodePositionX = PartNumberData.BarcodePositionX;
+                        break;
+                    case "SN":
+                        SerialNumberData.BarcodePositionX = (int.Parse(SerialNumberData.BarcodePositionX) - 10).ToString();
+                        SelectedViewControll();
+                        BarcodePositionX = SerialNumberData.BarcodePositionX;
+                        break;
+                    case "Logo":
+                        ImageLogoData.BarcodePositionX = (int.Parse(ImageLogoData.BarcodePositionX) - 10).ToString();
+                        SelectedViewControll();
+                        BarcodePositionX = ImageLogoData.BarcodePositionX;
+                        break;
+                    default:
+                        Console.WriteLine("No Click");
+                        break;
+                }
+
+            } catch (Exception ex)
+            {
+                Trace.WriteLine("========== Exception ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\nException : " + ex);
+                throw;
+            }
+
         }
 
         private void PositionDownCommand(object obj)
         {
-            PositionY = (int.Parse(PositionY) + 10).ToString();
-            SelectedViewControll();
+            Trace.WriteLine("==========   Start   ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\n");
+            try
+            {
+                switch (ClickView)
+                {
+                    case "Barcode":
+                        BarcodeData.BarcodePositionY = (int.Parse(BarcodeData.BarcodePositionY) + 10).ToString();
+                        SelectedViewControll();
+                        BarcodePositionY = BarcodeData.BarcodePositionY;
+                        break;
+                    case "PN":
+                        PartNumberData.BarcodePositionY = (int.Parse(PartNumberData.BarcodePositionY) + 10).ToString();
+                        SelectedViewControll();
+                        BarcodePositionY = PartNumberData.BarcodePositionY;
+                        break;
+                    case "SN":
+                        SerialNumberData.BarcodePositionY = (int.Parse(SerialNumberData.BarcodePositionY) + 10).ToString();
+                        SelectedViewControll();
+                        BarcodePositionY = SerialNumberData.BarcodePositionY;
+                        break;
+                    case "Logo":
+                        ImageLogoData.BarcodePositionY = (int.Parse(ImageLogoData.BarcodePositionY) + 10).ToString();
+                        SelectedViewControll();
+                        BarcodePositionY = ImageLogoData.BarcodePositionY;
+                        break;
+                    default:
+                        Console.WriteLine("No Click");
+                        break;
+                }
+                
+            } catch (Exception ex)
+            {
+                Trace.WriteLine("========== Exception ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\nException : " + ex);
+                throw;
+            }
+
         }
 
         private void PositionUpCommand(object obj)
         {
-            PositionY = (int.Parse(PositionY) - 10).ToString();
-            SelectedViewControll();
-        }
-
-        private void ClickLogoCommand(object obj)
-        {
-            Console.WriteLine("ClickLogo");
-            ClickView = "Logo";
-        }
-
-        private void ClickSNCommand(object obj)
-        {
-            Console.WriteLine("ClickSN");
-            ClickView = "SN";
-        }
-
-        private void ClickPNCommand(object obj)
-        {
-            Console.WriteLine("ClickPN");
-            ClickView = "PN";
-        }
-
-        private void ClickBarcodeCommand(object obj)
-        {
-            Console.WriteLine("ClickBarcode");
-            ClickView = "Barcode";
-        }
-        private string _clickView;
-        public string ClickView
-        {
-            get { return _clickView; }
-            set {
-                _clickView = value;
-                RaisePropertyChanged("ClickView");
+            Trace.WriteLine("==========   Start   ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\n");
+            try
+            {
+                switch (ClickView)
+                {
+                    case "Barcode":
+                        BarcodeData.BarcodePositionY = (int.Parse(BarcodeData.BarcodePositionY) - 10).ToString();
+                        SelectedViewControll();
+                        BarcodePositionY = BarcodeData.BarcodePositionY;
+                        break;
+                    case "PN":
+                        PartNumberData.BarcodePositionY = (int.Parse(PartNumberData.BarcodePositionY) - 10).ToString();
+                        SelectedViewControll();
+                        BarcodePositionY = PartNumberData.BarcodePositionY;
+                        break;
+                    case "SN":
+                        SerialNumberData.BarcodePositionY = (int.Parse(SerialNumberData.BarcodePositionY) - 10).ToString();
+                        SelectedViewControll();
+                        BarcodePositionY = SerialNumberData.BarcodePositionY;
+                        break;
+                    case "Logo":
+                        ImageLogoData.BarcodePositionY = (int.Parse(ImageLogoData.BarcodePositionY) - 10).ToString();
+                        SelectedViewControll();
+                        BarcodePositionY = ImageLogoData.BarcodePositionY;
+                        break;
+                    default:
+                        Console.WriteLine("No Click");
+                        break;
+                }
+                
+            } catch (Exception ex)
+            {
+                Trace.WriteLine("========== Exception ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\nException : " + ex);
+                throw;
             }
+
         }
+
+
         private void SetBarcodePosition()
         {
-            BarcodeViewPosition = new Thickness(double.Parse(PositionX) - 40, double.Parse(PositionY) - 30 , 0, 0);
+            Trace.WriteLine("==========   Start   ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\n");
+            try
+            {
+                BarcodeViewPosition = new Thickness(double.Parse(BarcodeData.BarcodePositionX) - 40, double.Parse(BarcodeData.BarcodePositionY) - 30, 0, 0);
+
+            } catch (Exception ex)
+            {
+                Trace.WriteLine("========== Exception ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\nException : " + ex);
+                throw;
+            }
+
         }
         private void SetPNPosition()
         {
-            //350 60 0 0
-            PNViewPosition = new Thickness(double.Parse(PositionX) + 280, double.Parse(PositionY) -30 , 0, 0);
+            Trace.WriteLine("==========   Start   ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\n");
+            try
+            {
+                PNViewPosition = new Thickness(double.Parse(PartNumberData.BarcodePositionX) + 280, double.Parse(PartNumberData.BarcodePositionY) - 30, 0, 0);
+
+            } catch (Exception ex)
+            {
+                Trace.WriteLine("========== Exception ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\nException : " + ex);
+                throw;
+            }
+
         }
         private void SetSNPosition()
         {
-            //350 110 0 0
-            SNViewPosition = new Thickness(double.Parse(PositionX) + 280, double.Parse(PositionY) + 20 , 0, 0);
+            Trace.WriteLine("==========   Start   ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\n");
+            try
+            {
+                SNViewPosition = new Thickness(double.Parse(SerialNumberData.BarcodePositionX) + 280, double.Parse(SerialNumberData.BarcodePositionY) + 20, 0, 0);
+            } catch (Exception ex)
+            {
+                Trace.WriteLine("========== Exception ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\nException : " + ex);
+                throw;
+            }
+
         }
         private void SetLogoPosition()
         {
-            //350 290 0 0
-            LogoViewPosition = new Thickness(double.Parse(PositionX) + 280, double.Parse(PositionY) + 210 , 0, 0);
+            Trace.WriteLine("==========   Start   ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\n");
+            try
+            {
+                LogoViewPosition = new Thickness(double.Parse(ImageLogoData.BarcodePositionX) + 280, double.Parse(ImageLogoData.BarcodePositionY) + 210, 0, 0);
+
+            } catch (Exception ex)
+            {
+                Trace.WriteLine("========== Exception ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\nException : " + ex);
+                throw;
+            }
+
         }
 
         private void BarcodeSizeDownCommand(object obj)
         {
-            if (BarcodeSize <= 1)
+            Trace.WriteLine("==========   Start   ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\n");
+            try
             {
-                return;
+                if (BarcodeSize <= 1)
+                {
+                    return;
+                }
+                --BarcodeSize;
+                BarcodeSizeView = BarcodeSize;
+                FontSize = BarcodeSize;
+                SetBarcodePosition();
+            } catch (Exception ex)
+            {
+                Trace.WriteLine("========== Exception ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\nException : " + ex);
+                throw;
             }
-            --BarcodeSize;
-            BarcodeSizeView = BarcodeSize;
-            FontSize = BarcodeSize;
-            SetBarcodePosition();
+
         }
 
         private void BarcodeSizeUpCommand(object obj)
         {
-            
-            if (BarcodeSize > 9)
+            Trace.WriteLine("==========   Start   ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\n");
+            try
             {
-                return;
+                if (BarcodeSize > 9)
+                {
+                    return;
+                }
+                ++BarcodeSize;
+                BarcodeSizeView = BarcodeSize;
+                FontSize = BarcodeSize;
+                SetBarcodePosition();
+
+            } catch (Exception ex)
+            {
+                Trace.WriteLine("========== Exception ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\nException : " + ex);
+                throw;
             }
-            ++BarcodeSize;
-            BarcodeSizeView = BarcodeSize;
-            FontSize = BarcodeSize;
-            SetBarcodePosition();
+            
         }
 
 
         private void PrintTestSystem(object obj)
         {
-            StringBuilder builder = new StringBuilder();
-            builder.Append(SetBarcodeData());
-            builder.Append(SetPNData());
-            builder.Append(SetSNData());
-            builder.Append(SetLogoData());
+            Trace.WriteLine("==========   Start   ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\n");
+            try
+            {
 
-            InputText = builder.ToString();
+                StringBuilder builder = new StringBuilder();
+                builder.Append(SetBarcodeData());
+                builder.Append(SetPNData());
+                builder.Append(SetSNData());
+                builder.Append(SetLogoData());
 
-            Console.WriteLine(InputText);
-            //GetPrint(PrinterName);
+                InputText = builder.ToString();
+
+                Console.WriteLine(InputText);
+                GetPrint(PrinterName);
+
+            } catch (Exception ex)
+            {
+                Trace.WriteLine("========== Exception ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\nException : " + ex);
+                throw;
+            }
+
         }
 
         private string SetBarcodeData()
         {
-            StringBuilder builder = new StringBuilder();
 
-            //Barcode
-            SetDataPosition = PositionX + "," + PositionY; // 70,90
-            BarcodeStyle = "\n^BX";
-            CommandData = Barcode;
-            builder.Append(SetDataPosition);//input Data Selected
-            builder.Append(BarcodeStyle);//barcode
-            builder.Append(CommandData);//input Data
+            Trace.WriteLine("==========   Start   ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\n");
+            try
+            {
 
-            SetBarcodePosition();
+                StringBuilder builder = new StringBuilder();
 
-            return builder.ToString();
+                SetDataPosition = BarcodeData.BarcodePositionX + "," + BarcodeData.BarcodePositionY; // 70,90
+                BarcodeStyle = "\n^BX";
+                CommandData = Barcode;
+                builder.Append(SetDataPosition);//input Data Selected
+                builder.Append(BarcodeStyle);//barcode
+                builder.Append(CommandData);//input Data
+
+                SetBarcodePosition();
+
+                return builder.ToString();
+            } catch (Exception ex)
+            {
+                Trace.WriteLine("========== Exception ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\nException : " + ex);
+                throw;
+            }
+
         }
         private string SetPNData()
         {
-            StringBuilder builder = new StringBuilder();
+            Trace.WriteLine("==========   Start   ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\n");
+            try
+            {
+                StringBuilder builder = new StringBuilder();
 
-            //PN
-            SetDataPosition = (int.Parse(PositionX) + 140).ToString() + "," + PositionY;
-            CommandData = PN;
-            builder.Append(SetDataPosition);
-            builder.Append("\n^A0N,30,25"); // 앞에것이 높이, 뒤에것이 가로 넓이
-            builder.Append(CommandData);
+                SetDataPosition = (int.Parse(PartNumberData.BarcodePositionX) + 140).ToString() + "," + PartNumberData.BarcodePositionY;
+                CommandData = PN;
+                builder.Append(SetDataPosition);
+                builder.Append("\n^A0N,30,25"); // 앞에것이 높이, 뒤에것이 가로 넓이
+                builder.Append(CommandData);
 
-            SetPNPosition();
+                SetPNPosition();
 
-            return builder.ToString();
+                return builder.ToString();
+
+            } catch (Exception ex)
+            {
+                Trace.WriteLine("========== Exception ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\nException : " + ex);
+                throw;
+            }
+
         }
         private string SetSNData()
         {
-            StringBuilder builder = new StringBuilder();
+            Trace.WriteLine("==========   Start   ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\n");
+            try
+            {
+                StringBuilder builder = new StringBuilder();
 
-            //SN
-            SetDataPosition = (int.Parse(PositionX) + 140).ToString() + "," + (int.Parse(PositionY) + 30).ToString();
-            CommandData = SN;
-            builder.Append(SetDataPosition);
-            builder.Append("\n^A0N,30,30");
-            builder.Append(CommandData);
+                //SN
+                SetDataPosition = (int.Parse(SerialNumberData.BarcodePositionX) + 140).ToString() + "," + (int.Parse(SerialNumberData.BarcodePositionY) + 30).ToString();
+                CommandData = SN;
+                builder.Append(SetDataPosition);
+                builder.Append("\n^A0N,30,30");
+                builder.Append(CommandData);
 
-            SetSNPosition();
+                SetSNPosition();
 
-            return builder.ToString();
+                return builder.ToString();
+            } catch (Exception ex)
+            {
+                Trace.WriteLine("========== Exception ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\nException : " + ex);
+                throw;
+            }
+
         }
         private string SetLogoData()
         {
-            StringBuilder builder = new StringBuilder();
+            Trace.WriteLine("==========   Start   ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\n");
+            try
+            {
+                StringBuilder builder = new StringBuilder();
 
-            //LOGO
-            SetDataPosition = (int.Parse(PositionX) + 160).ToString() + "," + (int.Parse(PositionY) + 90).ToString();
-            Image = "LucidS.PNG";
-            builder.Append(SetDataPosition);
-            builder.Append(Image);
+                //LOGO
+                SetDataPosition = (int.Parse(ImageLogoData.BarcodePositionX) + 160).ToString() + "," + (int.Parse(ImageLogoData.BarcodePositionY) + 90).ToString();
+                Image = "LucidS.PNG";
+                builder.Append(SetDataPosition);
+                builder.Append(Image);
 
-            SetLogoPosition();
+                SetLogoPosition();
 
-            return builder.ToString();
+                return builder.ToString();
+            } catch (Exception ex)
+            {
+                Trace.WriteLine("========== Exception ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\nException : " + ex);
+                throw;
+            }
+
         }
 
         private string GetPrintSecondLabel()
         {
-            StringBuilder builder = new StringBuilder();
-            SetDataPosition = (int.Parse(PositionX) + 500).ToString() + "," + PositionY;
-            BarcodeStyle = "^BX";
-            CommandData = Barcode;
+            Trace.WriteLine("==========   Start   ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\n");
+            try
+            {
 
-            builder.Append(SetDataPosition);//input Data Selected
-            builder.Append(BarcodeStyle);//barcode
-            builder.Append(CommandData);//input Data
+                StringBuilder builder = new StringBuilder();
+                SetDataPosition = (int.Parse(BarcodePositionX) + 500).ToString() + "," + BarcodePositionY;
+                BarcodeStyle = "^BX";
+                CommandData = Barcode;
 
-            SetDataPosition = (int.Parse(PositionX) + 640).ToString() + "," + PositionY;
-            CommandData = PN;
-            builder.Append(SetDataPosition);
-            builder.Append("\n^A0N,30,25"); // 앞에것이 높이, 뒤에것이 가로 넓이
-            builder.Append(CommandData);
+                builder.Append(SetDataPosition);//input Data Selected
+                builder.Append(BarcodeStyle);//barcode
+                builder.Append(CommandData);//input Data
 
-
-            SetDataPosition = (int.Parse(PositionX) + 640).ToString() + "," + (int.Parse(PositionY) + 30).ToString();
-            CommandData = SN;
-            builder.Append(SetDataPosition);
-            builder.Append("\n^A0N,30,25");
-            builder.Append(CommandData);
+                SetDataPosition = (int.Parse(BarcodePositionX) + 640).ToString() + "," + BarcodePositionY;
+                CommandData = PN;
+                builder.Append(SetDataPosition);
+                builder.Append("\n^A0N,30,25"); // 앞에것이 높이, 뒤에것이 가로 넓이
+                builder.Append(CommandData);
 
 
-            SetDataPosition = (int.Parse(PositionX) + 640).ToString() + "," + (int.Parse(PositionY) + 100).ToString();
-            CommandData = "LUCID";
-            builder.Append(SetDataPosition);
-            builder.Append("\n^A0N,35,65");
-            builder.Append(CommandData);
+                SetDataPosition = (int.Parse(BarcodePositionX) + 640).ToString() + "," + (int.Parse(BarcodePositionY) + 30).ToString();
+                CommandData = SN;
+                builder.Append(SetDataPosition);
+                builder.Append("\n^A0N,30,25");
+                builder.Append(CommandData);
 
-            return builder.ToString();
+
+                SetDataPosition = (int.Parse(BarcodePositionX) + 640).ToString() + "," + (int.Parse(BarcodePositionY) + 100).ToString();
+                CommandData = "LUCID";
+                builder.Append(SetDataPosition);
+                builder.Append("\n^A0N,35,65");
+                builder.Append(CommandData);
+
+                return builder.ToString();
+            } catch (Exception ex)
+            {
+                Trace.WriteLine("========== Exception ==========\nMethodName : " + (MethodBase.GetCurrentMethod().Name) + "\nException : " + ex);
+                throw;
+            }
+
         }
 
 

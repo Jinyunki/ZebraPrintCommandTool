@@ -80,12 +80,12 @@
             <TextBlock Grid.Row="0" Text="{Binding Barcode}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             <TextBlock Grid.Row="1" Text="{Binding PN}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             <TextBlock Grid.Row="2" Text="{Binding SN}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            
-            
-            <TextBox Grid.Row="3" Text="{Binding PositionX}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            <TextBox Grid.Row="4" Text="{Binding PositionY}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
 
-            <Button Grid.Row="12" Content="TEST SEND" Command="{Binding Test}"/>
+
+            <TextBox Grid.Row="3" Text="{Binding BarcodePositionX}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <TextBox Grid.Row="4" Text="{Binding BarcodePositionY}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+
+            <Button Grid.Row="12" Content="TEST SEND" Command="{Binding CommandPrintSend}"/>
 
 
             
